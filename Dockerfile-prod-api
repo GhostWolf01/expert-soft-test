@@ -3,9 +3,9 @@ FROM node:22-alpine
 
 WORKDIR /app
 COPY ./src/chat-api .
-RUN bun install -f
+RUN npm install -f
 
-RUN bun run build
+RUN npm run build
 
 USER bun
 
@@ -24,4 +24,4 @@ ENV DB_NAME=$DB_NAME
 
 EXPOSE 80/tcp 443
 
-CMD bun run start 
+CMD npm run start 
