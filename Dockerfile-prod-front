@@ -1,19 +1,15 @@
 FROM oven/bun:1
 
+ARG API_URL="app"
+ENV API_URL=$API_URL
+
 WORKDIR /app
 COPY ./src/chat-front .
 RUN bun install -f
 
-RUN bun run build
-
-USER bun
-
-ENV PORT=80
-ARG API_URL="app"
-ENV API_URL=$API_URL
-
 EXPOSE 80/tcp 443
 
 # build
+RUN bun run build-only
 
 CMD bun run preview

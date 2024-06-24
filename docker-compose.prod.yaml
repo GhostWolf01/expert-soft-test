@@ -5,10 +5,13 @@ services:
       API_URL: app
     build:
       context: ./
-      dockerfile: Dockerfile-prod
+      dockerfile: Dockerfile-prod-front
     restart: unless-stopped
     volumes:
       - ./src/chat-front:/app/front/
+    ports:
+      - "3001:80"
+      - "3444:443"
   db:
     image: postgres
     restart: always
@@ -34,8 +37,8 @@ services:
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
     ports:
-      - "80:80"
-      - "443:443"
+      - "3000:80"
+      - "3443:443"
     depends_on:
       - db
     volumes:
