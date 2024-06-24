@@ -1,6 +1,8 @@
 services:
   frontend:
     container_name: frontend
+    environment:
+      API_URL: app
     build:
       context: ./
       dockerfile: Dockerfile-prod
@@ -25,8 +27,12 @@ services:
       dockerfile: Dockerfile-dev-api
     container_name: nest-docker-postgres
     environment:
-      - PORT=80
-      - DB_URL=postgres://postgres:@127.0.0.1:5432/chatDB
+      PORT: 80
+      DB_NAME: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
     ports:
       - "80:80"
       - "443:443"
