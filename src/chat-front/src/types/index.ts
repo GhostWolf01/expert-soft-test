@@ -8,7 +8,7 @@ export type Message = {
   text: string;
   type: 'text' | 'file';
   url: string;
-  userId: number;
-  createdAt: Date;
-  updatedAt: Date;
+  user: User;
+  createdAt: string;
+  updatedAt: string;
 };

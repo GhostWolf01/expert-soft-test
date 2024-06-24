@@ -1,0 +1,11 @@
+Dockerfile
+.dockerignore
+node_modules
+dist
+npm-debug.log
+.nuxt
+.git
+.output
+package-lock.json
+bun.lockb
+.env

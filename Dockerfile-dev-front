@@ -1,7 +1,12 @@
-FROM oven/bun:1 as base
+#FROM node:22-alpine
+FROM oven/bun:latest
 
-WORKDIR /app
-COPY ./src .
-RUN bun install -f
+WORKDIR /app/front/
+COPY ./src/chat-front .
 
-CMD ["bun", "run", "dev", "--port=80", "--host"]
+RUN bun install --force
+
+ARG API_URL="app"
+ENV API_URL=$API_URL
+
+CMD bun run docker:dev 

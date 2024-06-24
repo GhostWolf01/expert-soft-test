@@ -1,7 +1,7 @@
 FROM oven/bun:1 as base
 
 WORKDIR /app
-COPY ./src .
+COPY ./src/chat-front .
 RUN bun install -f
 
 RUN bun run build
@@ -9,7 +9,11 @@ RUN bun run build
 USER bun
 
 ENV PORT=80
+ARG API_URL="app"
+ENV API_URL=$API_URL
 
 EXPOSE 80/tcp 443
 
-ENTRYPOINT [ "bun", "run", "start" ]
+# build
+
+CMD bun run preview
