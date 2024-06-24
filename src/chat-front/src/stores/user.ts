@@ -4,7 +4,7 @@ import { ref } from 'vue';
 import type { User } from '@/types';
 import { setTokenToCookies, getTokenFromCookies, removeTokenFromCookies } from '@/utils/cookies';
 
-type LoginUserDto = {
+export type LoginUserDto = {
   name: string;
   password: string;
 };
@@ -13,6 +13,11 @@ type ReturnLoginUserDto = {
   user: Pick<User, 'id' | 'name'>;
   jwt: string;
   expires: string;
+};
+
+export type ReturnError = {
+  success: boolean;
+  error: Error;
 };
 
 export const useUserStore = defineStore('user', () => {
@@ -38,25 +43,58 @@ export const useUserStore = defineStore('user', () => {
     });
   }
 
-  function signin(userL: LoginUserDto) {
-    socket.emit('signin', { ...userL }, (data: ReturnLoginUserDto) => {
-      user.value = data.user;
-      setTokenToCookies('jwtToken', data.jwt, {
-        expires: new Date(data.expires),
+  function signin(userL: LoginUserDto): ReturnError {
+    try {
+      socket.emit('signin', { ...userL }, (data: ReturnLoginUserDto) => {
+        user.value = data.user;
+        setTokenToCookies('jwtToken', data.jwt, {
+          expires: new Date(data.expires),
+        });
+        isLogin.value = true;
       });
-      isLogin.value = true;
-    });
+      return {
+        success: true,
+        error: new Error(''),
+      };
+    } catch (e) {
+      const error = e as Error;
+      return {
+        success: false,
+        error,
+      };
+    }
   }
 
-  function login(userL: LoginUserDto) {
-    socket.emit('login', { ...userL }, (data: ReturnLoginUserDto) => {
-      user.value = data.user;
-      setTokenToCookies('jwtToken', data.jwt, {
-        expires: new Date(data.expires),
+  function login(userL: LoginUserDto): ReturnError {
+    try {
+      socket.emit('login', { ...userL }, (data: ReturnLoginUserDto) => {
+        user.value = data.user;
+        setTokenToCookies('jwtToken', data.jwt, {
+          expires: new Date(data.expires),
+        });
+        isLogin.value = true;
       });
-      isLogin.value = true;
-    });
+      return {
+        success: true,
+        error: new Error(''),
+      };
+    } catch (e) {
+      const error = e as Error;
+      return {
+        success: false,
+        error,
+      };
+    }
   }
 
-  return { user, isLogin, signin, login, bindEvents };
+  function logout() {
+    removeTokenFromCookies();
+    user.value = {
+      id: 0,
+      name: '',
+    };
+    isLogin.value = false;
+  }
+
+  return { user, isLogin, signin, login, logout, bindEvents };
 });

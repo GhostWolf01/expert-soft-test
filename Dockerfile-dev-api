@@ -1,9 +1,21 @@
-FROM oven/bun:1 as base
+FROM node:22-alpine
+# FROM oven/bun:latest // error argon2 fix in 1.17
 
-WORKDIR /app
-COPY ./src .
-RUN bun install -f
+WORKDIR /app/api/
+COPY ./src/chat-api .
 
-RUN bun run build
+RUN npm install --force
 
-CMD ["bun", "run", "start:dev"]
+
+ARG DB_PORT=5432
+ARG DB_NAME='postgres'
+ARG DB_HOST='db'
+ARG DB_USERNAME='postgres'
+ARG DB_PASSWORD='postgres'
+ENV DB_HOST=$DB_HOST
+ENV DB_PORT=$DB_PORT
+ENV DB_USERNAME=$DB_USERNAME
+ENV DB_PASSWORD=$DB_PASSWORD
+ENV DB_NAME=$DB_NAME
+
+CMD npm run start:dev

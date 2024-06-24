@@ -1,20 +1,26 @@
 services:
   frontend:
-    container_name: frontend
+    container_name: chat-frontend
+    platform: "linux/amd64"
+    environment:
+      API_URL: app
     build:
       context: ./
       dockerfile: Dockerfile-dev-front
     restart: unless-stopped
     volumes:
-      - ./src:/app/src
+      - ./src/chat-front:/app/front/
+    links:
+      - app
     ports:
-      - 3001:80
+      - 3001:3001
 
   db:
     image: postgres
     restart: always
     environment:
-      - POSTGRES_PASSWORD=postgres
+      POSTGRES_DB: chatDB
+      POSTGRES_PASSWORD: postgres
     container_name: postgres
     volumes:
       - ./pgdata:/var/lib/postgresql/data
@@ -27,23 +33,30 @@ services:
       dockerfile: Dockerfile-dev-api
     container_name: nest-docker-postgres
     environment:
-      - PORT=${PORT}
-      - DB_URL=postgres://postgres:@127.0.0.1:5432/chatDB
+      DB_NAME: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
     ports:
       - "3000:3000"
     depends_on:
       - db
+    links:
+      - db
     volumes:
-      - ./src:/app/src
+      - ./src/chat-api:/app/api/
 
   pgadmin:
     image: dpage/pgadmin4
     restart: always
     container_name: nest-pgadmin4
     environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-      - PGADMIN_DEFAULT_PASSWORD=pgadmin4
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: pgadmin4
     ports:
       - "5050:80"
     depends_on:
+      - db
+    links:
       - db
